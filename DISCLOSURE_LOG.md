@@ -133,4 +133,26 @@ posts it automatically at a fixed time each day.
 
 ## Phase 2 — Trial 2
 
-*Not yet started.*
+### D-015 — Unified Workspace Repository Push
+**Decision:** Push the complete local workspace including backend code, frontend sources, and metadata directly to the user's remote repository.
+**Origin:** Human requested; AI executed the initialization, gitignore setups, conflict resolution, and initial push.
+**Reasoning:** Consolidating the full history (both the Express orchestration server and the Vite React app) in a single GitHub repository ensures complete visibility for evaluation.
+**Status:** Adopted.
+
+### D-016 — nested .git Folder Cleanup
+**Decision:** Remove nested sub-repository structures (`RAG-based-automation-tool/.git`) within the workspace to avoid detached HEAD status and track the entire project structure from the workspace root.
+**Origin:** AI identified conflict; human accepted execution.
+**Reasoning:** Git will reject tracking folders containing their own `.git` directory under a standard commit, resulting in empty directory references. Removing these nested references keeps the repository structure clean and deployable.
+**Status:** Adopted.
+
+### D-017 — Vercel Subdirectory Redirection
+**Decision:** Add a workspace-root `vercel.json` file configuring the build command and output directory instead of moving workspace folders or changing options in the dashboard.
+**Origin:** AI recommended; human approved.
+**Reasoning:** Keeps the repository structure clean and developer-friendly without having to restructure folders, ensuring Vercel builds the React client seamlessly on the Edge host.
+**Status:** Adopted.
+
+### D-018 — Dynamic API Environment Detection
+**Decision:** Program the React UI to dynamically detect its hostname context (`window.location.hostname`) and redirect API traffic and SSE streams to `http://localhost:8787` when hosted on Vercel.
+**Origin:** AI designed and implemented.
+**Reasoning:** Express servers cannot run continuously inside serverless platforms without extra setup. By dynamically routing API endpoints, the Vercel-deployed frontend is still fully functional, communicating directly with the locally-hosted orchestrator for real-time validation.
+**Status:** Adopted.
