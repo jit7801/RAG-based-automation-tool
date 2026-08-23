@@ -46,7 +46,8 @@ body {
   }
 
   .btn-primary {
-    @apply btn text-white shadow-sm;
+    @apply btn shadow-sm;
+    color: #ffffff;
     background-color: #3B82F6;
   }
   .btn-primary:hover {
@@ -54,22 +55,26 @@ body {
   }
 
   .btn-ghost {
-    @apply btn text-secondary hover:text-primary;
+    @apply btn;
+    color: #A7AFBC;
     border: 1px solid rgba(255, 255, 255, 0.08);
     background-color: #14171C;
   }
   .btn-ghost:hover {
+    color: #F5F7FA;
     background-color: #191D23;
     border-color: rgba(255, 255, 255, 0.14);
   }
 
   .btn-pass {
-    @apply btn text-white hover:opacity-90;
+    @apply btn;
+    color: #ffffff;
     background-color: #10B981;
   }
 
   .btn-block {
-    @apply btn text-white hover:opacity-90;
+    @apply btn;
+    color: #ffffff;
     background-color: #EF4444;
   }
 
@@ -100,7 +105,8 @@ body {
   }
 
   .status-idle {
-    @apply status-pill text-muted;
+    @apply status-pill;
+    color: #7D8795;
     background-color: #191D23;
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
