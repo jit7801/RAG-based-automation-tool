@@ -37,6 +37,7 @@ import {
   embed,
   embedBackend,
   escalate,
+  isLive,
   nearestPublished,
   publishPost,
   queryPassages,
@@ -152,6 +153,40 @@ export function isRunning(): boolean {
   return running;
 }
 
+// --- demo pacing ----------------------------------------------------------
+//
+// In live mode every step waits on real network I/O, so the pipeline view
+// animates by itself. In fallback mode there is no I/O at all: every fallback
+// resolves immediately, the whole six-step run completes inside a single
+// microtask cascade in well under 100ms, and the UI jumps straight from empty to
+// finished with nothing to watch.
+//
+// So in fallback mode only, yield briefly between steps. Two things keep this
+// honest: the `ms` reported for each step is measured around that step's actual
+// work and excludes this delay, and the delay is zero whenever credentials are
+// present. DEMO_PACE_MS=0 removes it entirely.
+//
+// It also fixes a real bug. Because a fallback run never yielded to the event
+// loop, Node could not accept a second request mid-run, so the concurrency guard
+// above could never engage and three rapid clicks produced three runs. Yielding
+// gives the guard something to catch.
+//
+// Read per call rather than cached at module load, so tests and the verify
+// harness can set DEMO_PACE_MS after this module has been imported.
+function paceMs(): number {
+  const raw = process.env.DEMO_PACE_MS;
+  if (raw !== undefined) {
+    const parsed = Number(raw);
+    if (Number.isFinite(parsed)) return Math.max(0, parsed);
+  }
+  return isLive() ? 0 : 420;
+}
+
+async function pace(): Promise<void> {
+  const ms = paceMs();
+  if (ms > 0) await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export async function runPipeline(params: PipelineParams): Promise<RunRecord> {
   if (running) {
     throw new Error('A run is already in progress. Wait for it to finish.');
@@ -197,8 +232,9 @@ export async function runPipeline(params: PipelineParams): Promise<RunRecord> {
     // =========================================================================
     // STEP 1: DISCOVER
     // =========================================================================
-    const step1Start = Date.now();
     stepStart('discover');
+    await pace();
+    const step1Start = Date.now();
     stepLog('discover', `Initiating trend discovery (trigger: ${params.trigger})...`);
 
     const query = params.query ?? 'emerging technology AI infrastructure';
@@ -246,8 +282,9 @@ export async function runPipeline(params: PipelineParams): Promise<RunRecord> {
     // =========================================================================
     // STEP 2: INGEST
     // =========================================================================
-    const step2Start = Date.now();
     stepStart('ingest');
+    await pace();
+    const step2Start = Date.now();
     stepLog('ingest', 'Chunking source documents and generating vector embeddings...');
 
     const rawPassages: Array<{ id: string; docId: string; publisher: string; text: string }> = [];
@@ -288,8 +325,9 @@ export async function runPipeline(params: PipelineParams): Promise<RunRecord> {
     // =========================================================================
     // STEP 3: RETRIEVE
     // =========================================================================
-    const step3Start = Date.now();
     stepStart('retrieve');
+    await pace();
+    const step3Start = Date.now();
     stepLog('retrieve', `Querying vector store for passages semantically grounded in "${trend.topic}"...`);
 
     // The embedding space is settled once step 2 has run, so gate thresholds can
@@ -330,8 +368,9 @@ export async function runPipeline(params: PipelineParams): Promise<RunRecord> {
     // =========================================================================
     // STEP 4: DRAFT
     // =========================================================================
-    const step4Start = Date.now();
     stepStart('draft');
+    await pace();
+    const step4Start = Date.now();
     stepLog('draft', 'Synthesizing professional draft with sentence-level claim attribution...');
 
     const drafted = await draftPost(ctx, trend.topic, retrieved);
@@ -440,8 +479,9 @@ export async function runPipeline(params: PipelineParams): Promise<RunRecord> {
     // =========================================================================
     // STEP 5: GATE
     // =========================================================================
-    const step5Start = Date.now();
     stepStart('gate');
+    await pace();
+    const step5Start = Date.now();
     stepLog('gate', 'Evaluating draft against 3 independent safety, verification, and novelty checks...');
 
     // Check 1: Evidence coverage
@@ -478,8 +518,9 @@ export async function runPipeline(params: PipelineParams): Promise<RunRecord> {
     // =========================================================================
     // STEP 6: ACT
     // =========================================================================
-    const step6Start = Date.now();
     stepStart('act');
+    await pace();
+    const step6Start = Date.now();
 
     let outcome: RunOutcome;
     if (gateResult.decision === 'publish') {

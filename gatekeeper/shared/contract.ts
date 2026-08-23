@@ -205,6 +205,76 @@ export interface ChannelMessageView {
   local: boolean;
 }
 
+// --- Repurposing & Brand Governance Engine ---------------------------------
+
+export type RepurposedFormatId = 'video_script' | 'thread' | 'social_caption' | 'blog_snippet';
+
+export interface BrandProfile {
+  id: string;
+  name: string;
+  tagline: string;
+  tone: string;
+  targetAudience: string;
+  forbiddenWords: string[];
+  preferredKeywords: string[];
+  signatureSignoff?: string;
+  rules: string[];
+}
+
+export interface BrandAlignmentScore {
+  overallScore: number; // 0..100
+  toneScore: number; // 0..100
+  vocabularyScore: number; // 0..100
+  claimFidelityScore: number; // 0..100
+  flaggedForbiddenWords: string[];
+  warnings: string[];
+  passed: boolean;
+}
+
+export interface ScriptScene {
+  timestamp: string;
+  visualCue: string;
+  onScreenText?: string;
+  narration: string;
+}
+
+export interface TweetItem {
+  index: number;
+  text: string;
+  charCount: number;
+}
+
+export interface RepurposedItem {
+  formatId: RepurposedFormatId;
+  title: string;
+  platform: string;
+  content: string;
+  estimatedReadTime: string;
+  metadata?: {
+    scenes?: ScriptScene[];
+    tweets?: TweetItem[];
+    hashtags?: string[];
+    wordCount?: number;
+  };
+  brandScore: BrandAlignmentScore;
+}
+
+export interface RepurposeBundle {
+  id: string;
+  originalTopic: string;
+  originalBody: string;
+  brandProfile: BrandProfile;
+  formats: Record<RepurposedFormatId, RepurposedItem>;
+  createdAt: string;
+}
+
+export interface RepurposeRequest {
+  topic?: string;
+  content: string;
+  brandProfileId?: string;
+  customProfile?: Partial<BrandProfile>;
+}
+
 // --- HTTP surface ---------------------------------------------------------
 
 export const API = {
@@ -222,4 +292,9 @@ export const API = {
   trends: '/api/trends',
   /** GET — ChannelMessageView[], newest first. */
   channel: '/api/channel',
+  /** POST — Repurpose core content across 4 formats. Body: RepurposeRequest */
+  repurpose: '/api/repurpose',
+  /** GET — BrandProfile[], available brand personas. */
+  brandProfiles: '/api/brand-profiles',
 } as const;
+

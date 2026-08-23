@@ -93,7 +93,7 @@ export function embedBackend(runId: string): EmbedBackend {
  * credentials, network error, timeout, non-2xx — falls back to the local
  * implementation and marks the run degraded.
  */
-async function execute<T>(
+export async function execute<T>(
   ctx: Ctx,
   service: string,
   operation: string,

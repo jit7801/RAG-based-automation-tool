@@ -5,12 +5,14 @@ interface EvidencePanelProps {
   draft: Draft | null;
   trend: Trend | null;
   passages: Passage[];
+  onOpenRepurpose?: (topic: string, content: string) => void;
 }
 
 export const EvidencePanel: React.FC<EvidencePanelProps> = ({
   draft,
   trend,
   passages,
+  onOpenRepurpose,
 }) => {
   const [selectedClaimId, setSelectedClaimId] = useState<string | null>(null);
 
@@ -56,11 +58,21 @@ export const EvidencePanel: React.FC<EvidencePanelProps> = ({
             {draft ? 'Generated Draft & Claim Verification' : 'Discovered Topic'}
           </h2>
         </div>
-        {draft && (
-          <span className="label font-mono text-2xs bg-sunk px-2 py-0.5 rounded border border-rule">
-            {claims.length} Verifiable {claims.length === 1 ? 'Claim' : 'Claims'}
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {draft && onOpenRepurpose && (
+            <button
+              onClick={() => onOpenRepurpose(draft.topic, draft.body)}
+              className="px-2.5 py-1 bg-accent/10 hover:bg-accent text-accent hover:text-white border border-accent/30 rounded text-2xs font-semibold font-mono transition-all flex items-center gap-1 shadow-2xs"
+            >
+              <span>⚡</span> Repurpose Across Platforms
+            </button>
+          )}
+          {draft && (
+            <span className="label font-mono text-2xs bg-sunk px-2 py-0.5 rounded border border-rule">
+              {claims.length} Verifiable {claims.length === 1 ? 'Claim' : 'Claims'}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Topic Title */}

@@ -40,7 +40,8 @@ import {
   recordDecision,
   serviceStatus,
 } from './swytchcode.ts';
-import type { AppConfig, HumanDecision, TrendOption } from '../shared/contract.ts';
+import { DEFAULT_BRAND_PROFILES, repurposeCoreContent } from './repurpose.ts';
+import type { AppConfig, HumanDecision, RepurposeRequest, TrendOption } from '../shared/contract.ts';
 
 const app = express();
 const PORT = process.env.PORT || 8787;
@@ -241,14 +242,26 @@ app.get('/api/feed', (_req: Request, res: Response) => {
 });
 
 // ---------------------------------------------------------------------------
-// 8. Knowledge Store Stats
+// 9. Content Repurposing & Brand Studio
 // ---------------------------------------------------------------------------
-app.get('/api/store/stats', (_req: Request, res: Response) => {
-  res.json({
-    docsCount: allDocs().length,
-    passagesCount: allPassages().length,
-    publishedCount: allPublished().length,
-  });
+app.get('/api/brand-profiles', (_req: Request, res: Response) => {
+  res.json(DEFAULT_BRAND_PROFILES);
+});
+
+app.post('/api/repurpose', async (req: Request, res: Response) => {
+  try {
+    const { topic, content, brandProfileId } = req.body as RepurposeRequest;
+    if (!content || typeof content !== 'string' || content.trim().length === 0) {
+      return res.status(400).json({ error: 'Content string is required.' });
+    }
+
+    const ctx = { runId: `repurpose-${Date.now()}` };
+    const bundle = await repurposeCoreContent(ctx, content.trim(), topic, brandProfileId);
+    res.json({ ok: true, bundle });
+  } catch (err) {
+    console.error('[server] repurpose failed:', err);
+    res.status(500).json({ error: (err as Error).message });
+  }
 });
 
 // ---------------------------------------------------------------------------

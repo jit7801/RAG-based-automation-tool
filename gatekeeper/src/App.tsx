@@ -6,6 +6,7 @@ import { EvidencePanel } from './components/EvidencePanel';
 import { GateBreakdown } from './components/GateBreakdown';
 import { Header } from './components/Header';
 import { PipelineView } from './components/PipelineView';
+import { RepurposeStudio } from './components/RepurposeStudio';
 import { RunHistory } from './components/RunHistory';
 import { ScenarioSelector } from './components/ScenarioSelector';
 import { useEventStream } from './hooks/useEventStream';
@@ -16,6 +17,9 @@ export const App: React.FC = () => {
   const [history, setHistory] = useState<RunRecord[]>([]);
   const [feed, setFeed] = useState<FeedMessage[]>([]);
   const [isConfigOpen, setIsConfigOpen] = useState(false);
+  const [isRepurposeOpen, setIsRepurposeOpen] = useState(false);
+  const [repurposeTopic, setRepurposeTopic] = useState('');
+  const [repurposeContent, setRepurposeContent] = useState('');
 
   const apiBase = window.location.hostname !== 'localhost' ? 'http://localhost:8787' : '';
 
@@ -33,7 +37,7 @@ export const App: React.FC = () => {
     } catch (err) {
       console.error('Failed to load initial app data:', err);
     }
-  }, []);
+  }, [apiBase]);
 
   useEffect(() => {
     fetchAppData();
@@ -78,6 +82,12 @@ export const App: React.FC = () => {
     }
   };
 
+  const handleOpenRepurpose = (topic?: string, body?: string) => {
+    setRepurposeTopic(topic || selectedTrend?.topic || draft?.topic || '');
+    setRepurposeContent(body || draft?.body || '');
+    setIsRepurposeOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-paper text-ink flex flex-col font-sans">
       <Header
@@ -85,13 +95,14 @@ export const App: React.FC = () => {
         isRunning={isRunning}
         onTriggerRun={() => handleTriggerRun()}
         onOpenConfig={() => setIsConfigOpen(true)}
+        onOpenRepurpose={() => handleOpenRepurpose()}
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
         {/* Editorial Subtitle / Intro Banner */}
         <div className="flex flex-wrap items-center justify-between border-b border-rule pb-3 text-xs text-ink-soft">
           <div>
-            <span className="font-semibold text-ink">Autonomous Daily Publication Engine</span> — Retrieves multi-source trends, grounds factual claims, evaluates brand safety & novelty, and publishes automatically at a scheduled time.
+            <span className="font-semibold text-ink">Autonomous Daily Publication Engine</span> — Retrieves multi-source trends, grounds factual claims, evaluates brand safety & novelty, and repurposes verified content across platforms.
           </div>
           <div className="font-mono text-2xs text-ink-faint">
             Fixed Schedule: {config?.scheduleLabel || '09:00 daily'}
@@ -119,6 +130,7 @@ export const App: React.FC = () => {
               draft={draft}
               trend={selectedTrend}
               passages={passages}
+              onOpenRepurpose={handleOpenRepurpose}
             />
 
             {/* 6-Step Pipeline Execution View */}
@@ -148,6 +160,15 @@ export const App: React.FC = () => {
         onClose={() => setIsConfigOpen(false)}
         config={config}
       />
+
+      {/* Multi-Platform Brand Repurposing Studio */}
+      <RepurposeStudio
+        isOpen={isRepurposeOpen}
+        onClose={() => setIsRepurposeOpen(false)}
+        initialTopic={repurposeTopic}
+        initialContent={repurposeContent}
+      />
     </div>
   );
 };
+

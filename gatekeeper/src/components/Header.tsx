@@ -6,6 +6,7 @@ interface HeaderProps {
   isRunning: boolean;
   onTriggerRun: () => void;
   onOpenConfig: () => void;
+  onOpenRepurpose?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -13,6 +14,7 @@ export const Header: React.FC<HeaderProps> = ({
   isRunning,
   onTriggerRun,
   onOpenConfig,
+  onOpenRepurpose,
 }) => {
   const [timeLeft, setTimeLeft] = useState<string>('');
 
@@ -118,6 +120,17 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Action buttons */}
+          {onOpenRepurpose && (
+            <button
+              onClick={onOpenRepurpose}
+              className="btn-ghost text-xs px-3 py-1.5 flex items-center gap-1.5 text-accent font-semibold border border-accent/20 bg-accent/5 hover:bg-accent hover:text-white transition-all shadow-2xs"
+              title="Multi-Platform Repurposing Studio"
+            >
+              <span>⚡</span>
+              <span>Brand Studio</span>
+            </button>
+          )}
+
           <button
             id="btn-settings"
             onClick={onOpenConfig}
