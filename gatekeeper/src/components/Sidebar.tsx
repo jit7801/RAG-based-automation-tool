@@ -46,11 +46,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="p-5 border-b border-border">
         <div className="flex items-center gap-3">
           <div className="w-7 h-7 rounded bg-brand flex items-center justify-center text-white font-semibold text-sm">
-            G
+            P
           </div>
           <div>
             <div className="font-semibold text-sm text-primary tracking-tight">
-              Gatekeeper
+              Proofly
             </div>
             <p className="text-metadata text-secondary">
               Content Intelligence

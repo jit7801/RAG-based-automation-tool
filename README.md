@@ -1,6 +1,6 @@
-# Gatekeeper — RAG-based Automation Tool
+# Proofly — RAG-based Automation & Content Intelligence Platform
 
-An autonomous daily publisher with a load-bearing RAG editorial gate designed to retrieve current trends, ground factual claims, verify brand safety, check novelty, and automatically publish content or escalate to human review.
+> **Autonomous trend-grounded publisher with an editorial safety gate and on-brand multi-platform repurposing engine.** Built for resilient, verifiable content operations.
 
 ---
 

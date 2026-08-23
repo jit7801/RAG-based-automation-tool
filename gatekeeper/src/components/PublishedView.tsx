@@ -23,7 +23,7 @@ export const PublishedView: React.FC<PublishedViewProps> = ({ feed, onOpenRepurp
         <div className="rounded-lg border border-border bg-surface p-12 text-center text-muted space-y-2">
           <p className="text-sm font-medium text-primary">No published content yet</p>
           <p className="text-xs text-secondary max-w-sm mx-auto">
-            Run the clean auto-publish benchmark (Scenario 1) to watch Gatekeeper publish a verified post.
+            Run the clean auto-publish benchmark (Scenario 1) to watch Proofly publish a verified post.
           </p>
         </div>
       ) : (

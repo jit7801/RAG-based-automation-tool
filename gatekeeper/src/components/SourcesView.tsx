@@ -88,7 +88,7 @@ export const SourcesView: React.FC = () => {
         {/* Architecture Note */}
         <div className="p-4 rounded bg-surface-raised border border-border-subtle text-xs text-secondary leading-relaxed">
           <span className="font-semibold text-primary">Fail-Safe Architecture: </span>
-          Gatekeeper funnels every external API call through a single execution gateway. When network services or upstream APIs become unreachable, Gatekeeper automatically falls back to the deterministic local knowledge corpus so evaluation never breaks.
+          Proofly funnels every external API call through a single execution gateway. When network services or upstream APIs become unreachable, Proofly automatically falls back to the deterministic local knowledge corpus so evaluation never breaks.
         </div>
       </div>
 

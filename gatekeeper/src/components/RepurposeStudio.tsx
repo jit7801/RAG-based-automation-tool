@@ -663,17 +663,17 @@ export const RepurposeStudio: React.FC<RepurposeStudioProps> = ({
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-2.5">
                                     <div className="h-9 w-9 rounded-full bg-accent text-white flex items-center justify-center font-bold text-xs">
-                                      G
+                                      P
                                     </div>
                                     <div>
                                       <div className="flex items-center gap-1.5">
                                         <span className="font-bold text-xs text-ink">
-                                          Gatekeeper Editorial
+                                          Proofly Editorial
                                         </span>
                                         <span className="text-accent text-xs">✓</span>
                                       </div>
                                       <span className="text-2xs font-mono text-ink-faint">
-                                        @gatekeeper_ai • Tweet {tweet.index} of{' '}
+                                        @proofly_ai • Tweet {tweet.index} of{' '}
                                         {currentItem.metadata?.tweets?.length}
                                       </span>
                                     </div>

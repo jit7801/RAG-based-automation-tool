@@ -78,7 +78,7 @@ export const ChannelFeed: React.FC<ChannelFeedProps> = ({ feed }) => {
                     }`}
                   />
                   <span className="font-bold text-xs text-ink font-mono">
-                    {msg.kind === 'decision' ? 'Reviewer' : 'Gatekeeper'}
+                    {msg.kind === 'decision' ? 'Reviewer' : 'Proofly'}
                   </span>
                   <span className="text-2xs text-ink-faint font-mono">
                     {new Date(msg.at).toLocaleTimeString()}
