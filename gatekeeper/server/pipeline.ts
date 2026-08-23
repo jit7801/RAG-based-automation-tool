@@ -241,7 +241,7 @@ export async function runPipeline(params: PipelineParams): Promise<RunRecord> {
     const discovered = await discoverTrends(ctx, query);
 
     let chosen = discovered[0];
-    if (params.trendId) {
+    if (params.trendId && !params.query) {
       const match = discovered.find((t) => t.id === params.trendId);
       if (match) chosen = match;
     }
