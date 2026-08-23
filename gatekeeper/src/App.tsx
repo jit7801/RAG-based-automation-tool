@@ -17,12 +17,14 @@ export const App: React.FC = () => {
   const [feed, setFeed] = useState<FeedMessage[]>([]);
   const [isConfigOpen, setIsConfigOpen] = useState(false);
 
+  const apiBase = window.location.hostname !== 'localhost' ? 'http://localhost:8787' : '';
+
   const fetchAppData = useCallback(async () => {
     try {
       const [cfgRes, histRes, feedRes] = await Promise.all([
-        fetch('/api/config'),
-        fetch('/api/history'),
-        fetch('/api/feed'),
+        fetch(`${apiBase}/api/config`),
+        fetch(`${apiBase}/api/history`),
+        fetch(`${apiBase}/api/feed`),
       ]);
 
       if (cfgRes.ok) setConfig(await cfgRes.json());
@@ -51,7 +53,7 @@ export const App: React.FC = () => {
 
   const handleTriggerRun = async (params: { trendId?: string; query?: string } = {}) => {
     try {
-      await fetch('/api/run', {
+      await fetch(`${apiBase}/api/run`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(params),
@@ -65,7 +67,7 @@ export const App: React.FC = () => {
   const handleDecision = async (decision: HumanDecision) => {
     if (!currentRunId) return;
     try {
-      await fetch(`/api/runs/${currentRunId}/decide`, {
+      await fetch(`${apiBase}/api/runs/${currentRunId}/decide`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ decision }),

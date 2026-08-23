@@ -38,7 +38,8 @@ export function useEventStream(onRunFinished?: () => void) {
   const currentStepRef = useRef<StepId | null>(null);
 
   useEffect(() => {
-    const es = new EventSource('/api/stream');
+    const apiBase = window.location.hostname !== 'localhost' ? 'http://localhost:8787' : '';
+    const es = new EventSource(`${apiBase}/api/stream`);
 
     es.onopen = () => {
       setConnected(true);
@@ -157,9 +158,11 @@ export function useEventStream(onRunFinished?: () => void) {
         setHumanDecision(event.decision);
         if (event.decision === 'approved') {
           setOutcome('published');
-        } else {
-          setOutcome('failed');
         }
+        // On rejection the outcome stays 'escalated'. A reviewer declining a
+        // draft is the gate working, not the pipeline erroring — 'failed' means
+        // the run crashed. The server draws the same distinction; showing
+        // 'failed' here would contradict the history view.
         break;
 
       case 'swytchcode:call': {
