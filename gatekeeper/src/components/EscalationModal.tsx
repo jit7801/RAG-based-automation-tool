@@ -32,33 +32,33 @@ export const EscalationAction: React.FC<EscalationActionProps> = ({
   };
 
   return (
-    <div className="rounded-lg border-2 border-block bg-block-bg/30 p-5 shadow-lift space-y-4 animate-fade-up">
+    <div className="rounded-lg border border-status-block-border bg-status-block-bg/60 p-4 shadow-panel space-y-3 animate-fade-in">
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="chip-block font-bold">Action Required</span>
-            <span className="label text-2xs">Human-in-the-Loop Escalation</span>
+            <span className="chip-block font-bold text-3xs">Action Required</span>
+            <span className="label text-3xs">Human-in-the-Loop Escalation</span>
           </div>
-          <h3 className="font-serif text-lg font-bold text-ink">
-            Editorial Intervention: Draft Held for Review
+          <h3 className="text-sm font-bold text-foreground">
+            Editorial Intervention: Draft Held for Human Review
           </h3>
-          <p className="text-xs text-ink-soft leading-relaxed max-w-2xl">
-            The gate identified safety, corroboration, or novelty risks. Review the reason below and decide whether to override the gate and publish, or reject this post.
+          <p className="text-xs text-foreground-muted leading-relaxed max-w-2xl">
+            The safety gate identified corroboration, sensitivity, or repetition risks. Review the reason and decide whether to override or reject.
           </p>
         </div>
       </div>
 
       {/* Rationale highlight */}
-      <div className="rounded border border-block/30 bg-raised p-3 text-xs text-block font-medium">
+      <div className="rounded border border-status-block-border bg-surface p-3 text-xs text-status-block font-medium">
         {gate.reason}
       </div>
 
       {/* Decision Status or Action Buttons */}
       {humanDecision ? (
-        <div className="rounded bg-raised p-3 border border-rule flex items-center justify-between">
-          <span className="text-xs text-ink-soft">
+        <div className="rounded bg-surface p-3 border border-border flex items-center justify-between">
+          <span className="text-xs text-foreground-muted">
             Reviewer Decision:{' '}
-            <strong className="uppercase font-mono text-ink">
+            <strong className="uppercase font-mono text-foreground">
               {humanDecision}
             </strong>
           </span>
@@ -73,12 +73,12 @@ export const EscalationAction: React.FC<EscalationActionProps> = ({
           </span>
         </div>
       ) : (
-        <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
+        <div className="flex flex-wrap items-center justify-end gap-2.5 pt-1">
           <button
             id="btn-reject-draft"
             onClick={() => handleAction('rejected')}
             disabled={submitting}
-            className="btn-block text-xs px-4 py-2"
+            className="btn-block text-xs px-3.5 py-1.5 font-medium"
           >
             {submitting ? 'Submitting...' : '✕ Reject Draft (Do Not Publish)'}
           </button>
@@ -86,7 +86,7 @@ export const EscalationAction: React.FC<EscalationActionProps> = ({
             id="btn-approve-draft"
             onClick={() => handleAction('approved')}
             disabled={submitting}
-            className="btn-pass text-xs px-4 py-2"
+            className="btn-pass text-xs px-3.5 py-1.5 font-medium"
           >
             {submitting ? 'Submitting...' : '✓ Override & Publish to #content'}
           </button>

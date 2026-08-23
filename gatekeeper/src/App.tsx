@@ -1,21 +1,26 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { ChannelFeed, type FeedMessage } from './components/ChannelFeed';
+import { BackCatalogueView } from './components/BackCatalogueView';
 import { ConfigDrawer } from './components/ConfigDrawer';
+import { ContentPipelineView } from './components/ContentPipelineView';
+import { DiscoverView } from './components/DiscoverView';
 import { EscalationAction } from './components/EscalationModal';
-import { EvidencePanel } from './components/EvidencePanel';
-import { GateBreakdown } from './components/GateBreakdown';
 import { Header } from './components/Header';
-import { PipelineView } from './components/PipelineView';
+import { InspectionView } from './components/InspectionView';
+import { OverviewView } from './components/OverviewView';
+import { PublishedView } from './components/PublishedView';
 import { RepurposeStudio } from './components/RepurposeStudio';
-import { RunHistory } from './components/RunHistory';
-import { ScenarioSelector } from './components/ScenarioSelector';
+import { ReviewQueueView } from './components/ReviewQueueView';
+import { Sidebar, type NavTabId } from './components/Sidebar';
+import { SourcesView } from './components/SourcesView';
 import { useEventStream } from './hooks/useEventStream';
-import type { AppConfig, HumanDecision, RunRecord } from './types';
+import type { AppConfig, HumanDecision, RunRecord, TrendOption } from './types';
 
 export const App: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<NavTabId>('overview');
   const [config, setConfig] = useState<(AppConfig & { nextRunAt?: string; schedulerActive?: boolean }) | null>(null);
   const [history, setHistory] = useState<RunRecord[]>([]);
-  const [feed, setFeed] = useState<FeedMessage[]>([]);
+  const [feed, setFeed] = useState<any[]>([]);
+  const [trends, setTrends] = useState<TrendOption[]>([]);
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [isRepurposeOpen, setIsRepurposeOpen] = useState(false);
   const [repurposeTopic, setRepurposeTopic] = useState('');
@@ -25,15 +30,17 @@ export const App: React.FC = () => {
 
   const fetchAppData = useCallback(async () => {
     try {
-      const [cfgRes, histRes, feedRes] = await Promise.all([
+      const [cfgRes, histRes, feedRes, trendsRes] = await Promise.all([
         fetch(`${apiBase}/api/config`),
         fetch(`${apiBase}/api/history`),
         fetch(`${apiBase}/api/feed`),
+        fetch(`${apiBase}/api/trends`),
       ]);
 
       if (cfgRes.ok) setConfig(await cfgRes.json());
       if (histRes.ok) setHistory(await histRes.json());
       if (feedRes.ok) setFeed(await feedRes.json());
+      if (trendsRes.ok) setTrends(await trendsRes.json());
     } catch (err) {
       console.error('Failed to load initial app data:', err);
     }
@@ -62,16 +69,19 @@ export const App: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(params),
       });
+      // Switch tab to inspection or overview if running
+      setActiveTab('pipeline');
       fetchAppData();
     } catch (err) {
       console.error('Failed to trigger run:', err);
     }
   };
 
-  const handleDecision = async (decision: HumanDecision) => {
-    if (!currentRunId) return;
+  const handleDecision = async (runId: string, decision: HumanDecision) => {
+    const targetRunId = runId || currentRunId;
+    if (!targetRunId) return;
     try {
-      await fetch(`${apiBase}/api/runs/${currentRunId}/decide`, {
+      await fetch(`${apiBase}/api/runs/${targetRunId}/decide`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ decision }),
@@ -88,75 +98,148 @@ export const App: React.FC = () => {
     setIsRepurposeOpen(true);
   };
 
+  const handleInspectRun = (run: RunRecord) => {
+    setActiveTab('pipeline');
+  };
+
+  // Tab metadata for top header
+  const tabMetadata: Record<NavTabId, { title: string; subtitle: string }> = {
+    overview: {
+      title: 'System Overview',
+      subtitle: 'Real-time Autonomous AI Publishing & Safety Gate Status',
+    },
+    discover: {
+      title: 'Trend Discovery & Benchmarks',
+      subtitle: 'Monitor publisher signals and exercise safety gates',
+    },
+    pipeline: {
+      title: 'Content Pipeline & Inspection',
+      subtitle: 'Inspect generated drafts, sentence claim attribution & safety verification',
+    },
+    review: {
+      title: 'Human Review Queue',
+      subtitle: 'Escalated posts requiring human-in-the-loop editorial decision',
+    },
+    published: {
+      title: 'Published Broadcasts',
+      subtitle: 'Safety-verified outbound messages live on channels',
+    },
+    sources: {
+      title: 'Publisher Knowledge Base',
+      subtitle: 'Indexed journalistic and technical outlets in Weaviate',
+    },
+    catalogue: {
+      title: 'Novelty Back-Catalogue',
+      subtitle: 'Vector space embeddings used for cosine repetition checks',
+    },
+  };
+
+  const currentMeta = tabMetadata[activeTab] || tabMetadata.overview;
+  const pendingReviewsCount = history.filter((r) => r.outcome === 'escalated' && !r.humanDecision).length;
+
   return (
-    <div className="min-h-screen bg-paper text-ink flex flex-col font-sans">
-      <Header
-        config={config}
-        isRunning={isRunning}
-        onTriggerRun={() => handleTriggerRun()}
-        onOpenConfig={() => setIsConfigOpen(true)}
+    <div className="min-h-screen bg-background text-foreground flex font-sans antialiased">
+      {/* Persistent Left SaaS Sidebar */}
+      <Sidebar
+        activeTab={activeTab}
+        onSelectTab={setActiveTab}
+        pendingReviewsCount={pendingReviewsCount}
+        isDegraded={isDegraded}
+        onOpenSettings={() => setIsConfigOpen(true)}
         onOpenRepurpose={() => handleOpenRepurpose()}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
-        {/* Editorial Subtitle / Intro Banner */}
-        <div className="flex flex-wrap items-center justify-between border-b border-rule pb-3.5 gap-2 text-xs text-ink-soft">
-          <div className="flex items-center gap-2">
-            <span className="font-serif font-bold text-ink text-sm">Autonomous Editorial Stream</span>
-            <span className="text-ink-faint">|</span>
-            <span className="hidden sm:inline">Grounds factual claims, evaluates brand safety & novelty, and repurposes verified content across platforms.</span>
-          </div>
-          <div className="font-mono text-2xs text-ink-faint bg-paper px-2 py-0.5 rounded border border-rule">
-            Fixed Schedule: <span className="font-semibold text-ink">{config?.scheduleLabel || '09:00 daily'}</span>
-          </div>
-        </div>
-
-        {/* Human Review Escalation Banner (if triggered) */}
-        <EscalationAction
-          runId={currentRunId}
-          draft={draft}
-          gate={gate}
-          humanDecision={humanDecision}
-          onDecision={handleDecision}
+      {/* Main App Workspace */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
+        {/* Top Navbar */}
+        <Header
+          config={config}
+          isRunning={isRunning}
+          activeTabTitle={currentMeta.title}
+          activeTabSubtitle={currentMeta.subtitle}
+          isDegraded={isDegraded}
+          onTriggerRun={() => handleTriggerRun()}
+          onOpenRepurpose={() => handleOpenRepurpose()}
         />
 
-        {/* 2-Column Responsive Workspace */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Main Stage (7 cols) */}
-          <div className="lg:col-span-7 space-y-6">
-            {/* Gate Breakdown */}
-            <GateBreakdown gate={gate} />
+        {/* Global Escalation Banner if current live run is held */}
+        <div className="px-6 pt-4">
+          <EscalationAction
+            runId={currentRunId}
+            draft={draft}
+            gate={gate}
+            humanDecision={humanDecision}
+            onDecision={(dec) => handleDecision(currentRunId || '', dec)}
+          />
+        </div>
 
-            {/* Evidence & Grounding Panel */}
-            <EvidencePanel
-              draft={draft}
-              trend={selectedTrend}
-              passages={passages}
+        {/* Dynamic View Body */}
+        <main className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
+          {activeTab === 'overview' && (
+            <OverviewView
+              steps={steps}
+              history={history}
+              isRunning={isRunning}
+              isDegraded={isDegraded}
+              onTriggerScenario={handleTriggerRun}
+              onSelectTab={setActiveTab}
+            />
+          )}
+
+          {activeTab === 'discover' && (
+            <DiscoverView
+              isRunning={isRunning}
+              trends={trends}
+              onTriggerScenario={handleTriggerRun}
+            />
+          )}
+
+          {activeTab === 'pipeline' && (
+            <div className="space-y-8">
+              {/* Detailed Content Inspection & Attribution Panel */}
+              <InspectionView
+                draft={draft}
+                trend={selectedTrend}
+                passages={passages}
+                gate={gate}
+                humanDecision={humanDecision}
+                onOpenRepurpose={handleOpenRepurpose}
+                onDecision={(dec) => handleDecision(currentRunId || '', dec)}
+              />
+
+              {/* Pipeline List */}
+              <ContentPipelineView
+                history={history}
+                currentRunRecord={null}
+                onInspectRun={handleInspectRun}
+                onTriggerScenario={handleTriggerRun}
+                isRunning={isRunning}
+              />
+            </div>
+          )}
+
+          {activeTab === 'review' && (
+            <ReviewQueueView
+              history={history}
+              onDecision={handleDecision}
+              onInspectRun={handleInspectRun}
+            />
+          )}
+
+          {activeTab === 'published' && (
+            <PublishedView
+              feed={feed}
               onOpenRepurpose={handleOpenRepurpose}
             />
+          )}
 
-            {/* 6-Step Pipeline Execution View */}
-            <PipelineView steps={steps} isDegraded={isDegraded} />
-          </div>
+          {activeTab === 'sources' && <SourcesView />}
 
-          {/* Sidebar / Controls (5 cols) */}
-          <div className="lg:col-span-5 space-y-6">
-            {/* Test Benchmark Scenarios */}
-            <ScenarioSelector
-              isRunning={isRunning}
-              onSelectScenario={handleTriggerRun}
-            />
+          {activeTab === 'catalogue' && <BackCatalogueView />}
+        </main>
+      </div>
 
-            {/* Outbound Channel Message Feed */}
-            <ChannelFeed feed={feed} />
-
-            {/* Run History Audit Log */}
-            <RunHistory history={history} />
-          </div>
-        </div>
-      </main>
-
-      {/* Configuration & Thresholds Drawer Modal */}
+      {/* Settings / Config Modal Drawer */}
       <ConfigDrawer
         isOpen={isConfigOpen}
         onClose={() => setIsConfigOpen(false)}
@@ -173,4 +256,5 @@ export const App: React.FC = () => {
     </div>
   );
 };
+
 

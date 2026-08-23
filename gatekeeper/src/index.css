@@ -3,160 +3,151 @@
 @tailwind utilities;
 
 /* ---------------------------------------------------------------------------
-   Design tokens — editorial, not "AI dashboard".
-   Deliberately a light paper theme: every other project in the room will be
-   dark with neon accents, and this reads better on camera for the video.
-   No purple, no gradients, one accent colour, hairline rules doing the work.
+   Design tokens — Production-grade SaaS dark-first interface.
+   Inspired by Linear, Vercel, and Perplexity.
    --------------------------------------------------------------------------- */
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 
-  --paper: #faf8f4;
-  --paper-raised: #ffffff;
-  --paper-sunk: #f2efe9;
+  --paper: #090a0f;
+  --paper-raised: #0f1117;
+  --paper-sunk: #161922;
 
-  --ink: #16181c;
-  --ink-soft: #4c525a;
-  --ink-faint: #8b9299;
+  --ink: #f1f5f9;
+  --ink-soft: #94a3b8;
+  --ink-faint: #64748b;
 
-  --rule: #e2ded6;
+  --rule: #1f2430;
 
-  --accent: #1f3a5f;
-  --accent-soft: #e8eef5;
+  --accent: #3b82f6;
+  --accent-soft: #1e293b;
 
-  /* Gate verdicts. Muted enough to sit in an editorial layout, distinct
-     enough to read instantly at demo distance. */
-  --pass: #2e6a4c;
-  --pass-bg: #e9f2ec;
-  --warn: #8f5e12;
-  --warn-bg: #fbf1dc;
-  --block: #9e2b25;
-  --block-bg: #faeae8;
+  /* Gate verdicts */
+  --pass: #10b981;
+  --pass-bg: rgba(16, 185, 129, 0.1);
+  --warn: #f59e0b;
+  --warn-bg: rgba(245, 158, 11, 0.1);
+  --block: #ef4444;
+  --block-bg: rgba(239, 68, 68, 0.1);
 
-  /* Citation highlight for the Evidence Panel. */
-  --cite: #fff0b8;
+  /* Citation highlight */
+  --cite: rgba(245, 158, 11, 0.22);
 }
 
 html,
 body,
 #root {
   height: 100%;
+  background-color: #090a0f;
+  color: #f1f5f9;
 }
 
 body {
-  background-color: var(--paper);
-  color: var(--ink);
+  background-color: #090a0f;
+  color: #f1f5f9;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-feature-settings: 'kern' 1, 'liga' 1;
 }
 
 ::selection {
-  background: var(--accent-soft);
-  color: var(--ink);
+  background: rgba(59, 130, 246, 0.35);
+  color: #ffffff;
 }
 
-/* Visible, non-ugly focus ring — judges do tab through things. */
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 1.5px solid #3b82f6;
   outline-offset: 2px;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 @layer components {
-  /* Small uppercase mono label. Used for step names, field labels, metadata. */
   .label {
-    @apply font-mono text-2xs uppercase tracking-[0.12em] text-ink-faint;
+    @apply font-mono text-3xs uppercase tracking-wider text-foreground-faint font-medium;
   }
 
   .card {
-    @apply rounded-lg border border-rule bg-raised shadow-card;
+    @apply rounded-lg border border-border bg-surface shadow-panel transition-all;
   }
 
   .well {
-    @apply rounded-md border border-rule bg-sunk;
+    @apply rounded-md border border-border-subtle bg-surface-raised;
   }
 
   .btn {
     @apply inline-flex select-none items-center justify-center gap-2 rounded-md
-           px-3.5 py-2 text-sm font-medium transition-colors duration-150
-           ease-editorial disabled:cursor-not-allowed disabled:opacity-45;
+           px-3 py-1.5 text-xs font-medium transition-all duration-150
+           disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   .btn-primary {
-    @apply btn bg-accent text-white hover:bg-[#182f4d];
+    @apply btn bg-brand text-white hover:bg-brand-hover shadow-sm hover:shadow-glow;
   }
 
   .btn-ghost {
-    @apply btn border border-rule bg-raised text-ink-soft hover:bg-sunk hover:text-ink;
+    @apply btn border border-border bg-surface-raised text-foreground-muted hover:bg-surface-hover hover:text-foreground hover:border-foreground-faint/40;
   }
 
   .btn-pass {
-    @apply btn bg-pass text-white hover:bg-[#255840];
+    @apply btn bg-status-pass/90 text-white hover:bg-status-pass;
   }
 
   .btn-block {
-    @apply btn bg-block text-white hover:bg-[#85241f];
+    @apply btn bg-status-block/90 text-white hover:bg-status-block;
   }
 
-  /* Verdict chip. */
+  /* Verdict chips */
   .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5
-           font-mono text-2xs uppercase tracking-[0.08em] transition-all;
+    @apply inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5
+           font-mono text-3xs uppercase tracking-wider font-semibold transition-all;
   }
 
-  .chip-pass  { @apply chip border-transparent bg-pass-bg text-pass font-semibold; }
-  .chip-warn  { @apply chip border-transparent bg-warn-bg text-warn font-semibold; }
-  .chip-block { @apply chip border-transparent bg-block-bg text-block font-semibold; }
-  .chip-idle  { @apply chip border-rule bg-sunk text-ink-faint; }
+  .chip-pass  { @apply chip border-status-pass-border bg-status-pass-bg text-status-pass; }
+  .chip-warn  { @apply chip border-status-warn-border bg-status-warn-bg text-status-warn; }
+  .chip-block { @apply chip border-status-block-border bg-status-block-bg text-status-block; }
+  .chip-idle  { @apply chip border-border bg-surface-raised text-foreground-faint; }
 
-  /* A claim inside the draft body, clickable to reveal provenance. */
+  /* Interactive claim attribution underline */
   .claim {
-    @apply cursor-pointer rounded px-1 py-0.5 transition-all duration-150
-           ease-editorial;
-    box-shadow: inset 0 -0.4em 0 var(--cite);
+    @apply cursor-pointer rounded px-1 py-0.5 transition-all duration-150 text-foreground;
+    box-shadow: inset 0 -0.45em 0 var(--cite);
   }
 
   .claim:hover {
     box-shadow: inset 0 -1.3em 0 var(--cite);
-    @apply text-ink;
+    @apply text-white;
   }
 
   .claim-active {
-    box-shadow: inset 0 -1.3em 0 var(--cite);
-    @apply ring-1 ring-amber-400/50 text-ink font-medium;
+    box-shadow: inset 0 -1.3em 0 rgba(245, 158, 11, 0.35);
+    @apply ring-1 ring-amber-400/60 text-white font-medium bg-amber-500/10;
   }
 
-  /* Unsupported claim — the evidence check found no corroboration. */
   .claim-weak {
-    box-shadow: inset 0 -0.4em 0 var(--block-bg);
-    @apply underline decoration-block decoration-wavy decoration-1 underline-offset-4;
-  }
-
-  .shadow-2xs {
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+    box-shadow: inset 0 -0.45em 0 var(--block-bg);
+    @apply underline decoration-status-block decoration-wavy decoration-1 underline-offset-4;
   }
 }
 
-/* Restrained scrollbars — this app shows a lot of scrolling log output. */
+/* Slim SaaS scrollbars */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--rule) transparent;
+  scrollbar-color: #1f2430 transparent;
 }
 
 *::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
 }
 
 *::-webkit-scrollbar-thumb {
-  background: var(--rule);
+  background: #1f2430;
   border-radius: 999px;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: var(--ink-faint);
+  background: #2e3648;
 }
 
 *::-webkit-scrollbar-track {
