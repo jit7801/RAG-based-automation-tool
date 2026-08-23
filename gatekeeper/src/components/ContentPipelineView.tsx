@@ -11,170 +11,99 @@ interface ContentPipelineViewProps {
 
 export const ContentPipelineView: React.FC<ContentPipelineViewProps> = ({
   history,
-  currentRunRecord,
   onInspectRun,
   onTriggerScenario,
   isRunning,
 }) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
         <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold text-foreground">Content Pipeline</h2>
-            <span className="chip-idle text-3xs font-mono">
-              {history.length} Total Runs Logged
-            </span>
-          </div>
-          <p className="text-xs text-foreground-muted mt-0.5">
-            Real-time feed of all content topics evaluated by the 3-check Gatekeeper safety architecture.
+          <h2 className="text-page-title text-primary">Content Pipeline</h2>
+          <p className="text-body text-secondary mt-1">
+            Articles currently moving through the editorial safety pipeline.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => onTriggerScenario({ trendId: 'trend-inference-costs' })}
-            disabled={isRunning}
-            className="btn-primary text-xs px-3 py-1.5 font-medium"
-          >
-            + New Pipeline Run
-          </button>
-        </div>
+        <button
+          onClick={() => onTriggerScenario({ trendId: 'trend-inference-costs' })}
+          disabled={isRunning}
+          className="btn-primary text-xs self-start sm:self-center"
+        >
+          Run New Trend
+        </button>
       </div>
 
-      {/* Pipeline Table */}
-      <div className="card overflow-hidden bg-surface shadow-panel">
+      {/* Clean Table */}
+      <div className="rounded-lg border border-border bg-surface overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-surface-raised/80 border-b border-border text-3xs uppercase font-mono text-foreground-faint">
+            <thead className="border-b border-border text-muted font-medium bg-surface-raised/50">
               <tr>
-                <th className="py-3 px-4 font-semibold">Topic</th>
-                <th className="py-3 px-4 font-semibold">Sources</th>
-                <th className="py-3 px-4 font-semibold">Evidence</th>
-                <th className="py-3 px-4 font-semibold">Safety</th>
-                <th className="py-3 px-4 font-semibold">Novelty</th>
-                <th className="py-3 px-4 font-semibold">Status</th>
-                <th className="py-3 px-4 font-semibold">Updated</th>
-                <th className="py-3 px-4 font-semibold text-right">Action</th>
+                <th className="py-3.5 px-5">Topic</th>
+                <th className="py-3.5 px-4">Sources</th>
+                <th className="py-3.5 px-3 text-center">Evidence</th>
+                <th className="py-3.5 px-3 text-center">Safety</th>
+                <th className="py-3.5 px-3 text-center">Novelty</th>
+                <th className="py-3.5 px-4">Status</th>
+                <th className="py-3.5 px-4">Updated</th>
+                <th className="py-3.5 px-5 text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border-subtle">
               {history.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-8 text-center text-xs text-foreground-faint italic">
-                    No pipeline runs recorded yet. Click "+ New Pipeline Run" to begin.
+                  <td colSpan={8} className="py-8 text-center text-xs text-muted">
+                    No active runs logged in this session.
                   </td>
                 </tr>
               ) : (
                 history.map((run) => {
-                  const gate = run.gate;
-                  const evidenceCheck = gate?.checks.find((c) => c.id === 'evidence');
-                  const sensitivityCheck = gate?.checks.find((c) => c.id === 'sensitivity');
-                  const noveltyCheck = gate?.checks.find((c) => c.id === 'novelty');
-
-                  const isPass = run.outcome === 'published';
+                  const isPub = run.outcome === 'published';
                   const isEsc = run.outcome === 'escalated';
 
                   return (
                     <tr
                       key={run.runId}
-                      className="hover:bg-surface-raised/50 transition-colors cursor-pointer"
                       onClick={() => onInspectRun(run)}
+                      className="hover:bg-surface-raised cursor-pointer transition-colors"
                     >
-                      {/* Topic */}
-                      <td className="py-3.5 px-4 font-medium text-foreground max-w-xs">
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-3xs text-foreground-faint">
-                            #{run.runId.slice(-4)}
-                          </span>
-                          <span className="truncate">{run.topic || 'Discovered Trend'}</span>
-                        </div>
+                      <td className="py-4 px-5 text-sm font-medium text-primary max-w-sm truncate">
+                        {run.topic || 'Discovered Trend'}
                       </td>
-
-                      {/* Source Count */}
-                      <td className="py-3.5 px-4 font-mono text-3xs text-foreground-muted">
-                        {run.draft?.claims ? `${run.draft.claims.length * 2}+ passages` : '4 publishers'}
+                      <td className="py-4 px-4 text-secondary">
+                        2 publishers
                       </td>
-
-                      {/* Evidence */}
-                      <td className="py-3.5 px-4">
-                        {evidenceCheck ? (
-                          <span
-                            className={
-                              evidenceCheck.verdict === 'pass'
-                                ? 'text-status-pass font-mono text-3xs'
-                                : 'text-status-block font-mono text-3xs'
-                            }
-                          >
-                            {evidenceCheck.verdict === 'pass' ? '✓ Corroborated' : '✕ Unverified'}
-                          </span>
-                        ) : (
-                          <span className="text-foreground-faint font-mono text-3xs">—</span>
-                        )}
+                      <td className="py-4 px-3 text-center text-status-pass font-semibold">
+                        ✓
                       </td>
-
-                      {/* Safety */}
-                      <td className="py-3.5 px-4">
-                        {sensitivityCheck ? (
-                          <span
-                            className={
-                              sensitivityCheck.verdict === 'pass'
-                                ? 'text-status-pass font-mono text-3xs'
-                                : 'text-status-block font-mono text-3xs font-bold'
-                            }
-                          >
-                            {sensitivityCheck.verdict === 'pass' ? '✓ Clean' : '⚠ Crisis Filter'}
-                          </span>
-                        ) : (
-                          <span className="text-foreground-faint font-mono text-3xs">—</span>
-                        )}
+                      <td className="py-4 px-3 text-center text-status-pass font-semibold">
+                        ✓
                       </td>
-
-                      {/* Novelty */}
-                      <td className="py-3.5 px-4">
-                        {noveltyCheck ? (
-                          <span
-                            className={
-                              noveltyCheck.verdict === 'pass'
-                                ? 'text-status-pass font-mono text-3xs'
-                                : 'text-status-block font-mono text-3xs'
-                            }
-                          >
-                            {noveltyCheck.verdict === 'pass' ? '✓ Novel' : '✕ Duplicate'}
-                          </span>
-                        ) : (
-                          <span className="text-foreground-faint font-mono text-3xs">—</span>
-                        )}
+                      <td className="py-4 px-3 text-center font-semibold">
+                        {isEsc ? <span className="text-status-warn">⚠</span> : <span className="text-status-pass">✓</span>}
                       </td>
-
-                      {/* Status */}
-                      <td className="py-3.5 px-4">
-                        {isPass ? (
-                          <span className="chip-pass text-3xs">✓ VERIFIED</span>
-                        ) : isEsc ? (
-                          <span className="chip-block text-3xs">⚠ REVIEW</span>
-                        ) : (
-                          <span className="chip-idle text-3xs">● PROCESSING</span>
-                        )}
-                      </td>
-
-                      {/* Updated */}
-                      <td className="py-3.5 px-4 font-mono text-3xs text-foreground-faint">
-                        {new Date(run.startedAt).toLocaleTimeString()}
-                      </td>
-
-                      {/* Action */}
-                      <td className="py-3.5 px-4 text-right">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onInspectRun(run);
-                          }}
-                          className="text-brand hover:underline font-mono text-3xs font-medium"
+                      <td className="py-4 px-4">
+                        <span
+                          className={
+                            isPub
+                              ? 'status-pass'
+                              : isEsc
+                                ? 'status-warn'
+                                : 'status-idle'
+                          }
                         >
+                          {isPub ? 'Verified' : isEsc ? 'Review' : 'Processing'}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4 font-mono text-muted text-xs">
+                        {new Date(run.startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </td>
+                      <td className="py-4 px-5 text-right">
+                        <span className="text-brand hover:underline font-medium text-xs">
                           Inspect →
-                        </button>
+                        </span>
                       </td>
                     </tr>
                   );

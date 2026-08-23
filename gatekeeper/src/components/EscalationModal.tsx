@@ -11,7 +11,6 @@ interface EscalationActionProps {
 
 export const EscalationAction: React.FC<EscalationActionProps> = ({
   runId,
-  draft,
   gate,
   humanDecision,
   onDecision,
@@ -31,67 +30,50 @@ export const EscalationAction: React.FC<EscalationActionProps> = ({
     }
   };
 
+  const failedCheck = gate.checks.find((c) => c.verdict === 'block' || c.verdict === 'warn');
+
   return (
-    <div className="rounded-lg border border-status-block-border bg-status-block-bg/60 p-4 shadow-panel space-y-3 animate-fade-in">
-      <div className="flex items-start justify-between gap-3">
+    <div className="rounded-lg border-l-4 border-l-status-block border border-border bg-surface p-5 space-y-3 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="chip-block font-bold text-3xs">Action Required</span>
-            <span className="label text-3xs">Human-in-the-Loop Escalation</span>
+            <span className="text-status-block font-semibold text-xs">● Editorial Review Required</span>
           </div>
-          <h3 className="text-sm font-bold text-foreground">
-            Editorial Intervention: Draft Held for Human Review
+          <h3 className="text-sm font-semibold text-primary">
+            {failedCheck ? `${failedCheck.label} check failed` : 'Draft held for human review'}
           </h3>
-          <p className="text-xs text-foreground-muted leading-relaxed max-w-2xl">
-            The safety gate identified corroboration, sensitivity, or repetition risks. Review the reason and decide whether to override or reject.
+          <p className="text-xs text-secondary leading-relaxed max-w-3xl">
+            {gate.reason}
           </p>
         </div>
-      </div>
 
-      {/* Rationale highlight */}
-      <div className="rounded border border-status-block-border bg-surface p-3 text-xs text-status-block font-medium">
-        {gate.reason}
-      </div>
-
-      {/* Decision Status or Action Buttons */}
-      {humanDecision ? (
-        <div className="rounded bg-surface p-3 border border-border flex items-center justify-between">
-          <span className="text-xs text-foreground-muted">
-            Reviewer Decision:{' '}
-            <strong className="uppercase font-mono text-foreground">
-              {humanDecision}
+        {/* Action Buttons */}
+        {humanDecision ? (
+          <div className="text-xs text-secondary self-center font-medium">
+            Decision:{' '}
+            <strong className="text-primary uppercase">
+              {humanDecision === 'approved' ? '✓ Overridden & Published' : '✕ Rejected'}
             </strong>
-          </span>
-          <span
-            className={
-              humanDecision === 'approved' ? 'chip-pass' : 'chip-block'
-            }
-          >
-            {humanDecision === 'approved'
-              ? '✓ Approved & Published to #content'
-              : '✕ Rejected & Discarded'}
-          </span>
-        </div>
-      ) : (
-        <div className="flex flex-wrap items-center justify-end gap-2.5 pt-1">
-          <button
-            id="btn-reject-draft"
-            onClick={() => handleAction('rejected')}
-            disabled={submitting}
-            className="btn-block text-xs px-3.5 py-1.5 font-medium"
-          >
-            {submitting ? 'Submitting...' : '✕ Reject Draft (Do Not Publish)'}
-          </button>
-          <button
-            id="btn-approve-draft"
-            onClick={() => handleAction('approved')}
-            disabled={submitting}
-            className="btn-pass text-xs px-3.5 py-1.5 font-medium"
-          >
-            {submitting ? 'Submitting...' : '✓ Override & Publish to #content'}
-          </button>
-        </div>
-      )}
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 self-start sm:self-center flex-shrink-0">
+            <button
+              onClick={() => handleAction('rejected')}
+              disabled={submitting}
+              className="btn-ghost text-xs px-3 py-1.5 text-secondary hover:text-status-block hover:border-status-block-border font-medium"
+            >
+              Reject Draft
+            </button>
+            <button
+              onClick={() => handleAction('approved')}
+              disabled={submitting}
+              className="btn-primary text-xs px-3 py-1.5 font-medium"
+            >
+              Review & Publish
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

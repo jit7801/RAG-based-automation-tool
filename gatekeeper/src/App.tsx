@@ -163,7 +163,7 @@ export const App: React.FC = () => {
         />
 
         {/* Global Escalation Banner if current live run is held */}
-        <div className="px-6 pt-4">
+        <div className="px-8 pt-6">
           <EscalationAction
             runId={currentRunId}
             draft={draft}
@@ -174,14 +174,16 @@ export const App: React.FC = () => {
         </div>
 
         {/* Dynamic View Body */}
-        <main className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
+        <main className="flex-1 p-8 max-w-6xl w-full mx-auto space-y-8">
           {activeTab === 'overview' && (
             <OverviewView
               steps={steps}
               history={history}
+              currentGate={gate}
               isRunning={isRunning}
               isDegraded={isDegraded}
               onTriggerScenario={handleTriggerRun}
+              onInspectRun={handleInspectRun}
               onSelectTab={setActiveTab}
             />
           )}
@@ -195,7 +197,7 @@ export const App: React.FC = () => {
           )}
 
           {activeTab === 'pipeline' && (
-            <div className="space-y-8">
+            <div className="space-y-12">
               {/* Detailed Content Inspection & Attribution Panel */}
               <InspectionView
                 draft={draft}

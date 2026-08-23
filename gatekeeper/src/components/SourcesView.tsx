@@ -4,129 +4,126 @@ interface SourceItem {
   name: string;
   domain: string;
   reliability: string;
-  reliabilityScore: number;
   indexedArticles: number;
-  health: 'healthy' | 'degraded';
-  category: string;
+  status: string;
 }
 
 const SOURCES: SourceItem[] = [
-  {
-    name: 'The Kernel',
-    domain: 'thekernel.tech',
-    reliability: 'Tier 1 Verified',
-    reliabilityScore: 98,
-    indexedArticles: 342,
-    health: 'healthy',
-    category: 'Hardware & Quantisation',
-  },
-  {
-    name: 'Byteline',
-    domain: 'byteline.press',
-    reliability: 'Tier 1 Verified',
-    reliabilityScore: 95,
-    indexedArticles: 218,
-    health: 'healthy',
-    category: 'Model Serving & Inference',
-  },
-  {
-    name: 'Compute Weekly',
-    domain: 'computeweekly.com',
-    reliability: 'Tier 1 Verified',
-    reliabilityScore: 96,
-    indexedArticles: 186,
-    health: 'healthy',
-    category: 'Cloud Infrastructure',
-  },
-  {
-    name: 'Signal & Stack',
-    domain: 'signalstack.dev',
-    reliability: 'Tier 2 Industry Signal',
-    reliabilityScore: 88,
-    indexedArticles: 124,
-    health: 'healthy',
-    category: 'Developer Ecosystem',
-  },
-  {
-    name: 'Harbour Dispatch',
-    domain: 'harbourdispatch.net',
-    reliability: 'Regional Wire',
-    reliabilityScore: 92,
-    indexedArticles: 94,
-    health: 'healthy',
-    category: 'Logistics & Supply Chain',
-  },
-  {
-    name: 'Meridian Wire',
-    domain: 'meridianwire.org',
-    reliability: 'General News Wire',
-    reliabilityScore: 91,
-    indexedArticles: 140,
-    health: 'healthy',
-    category: 'Macro & Incident Feeds',
-  },
+  { name: 'The Kernel', domain: 'thekernel.tech', reliability: 'Tier 1 Verified', indexedArticles: 342, status: 'Active' },
+  { name: 'Byteline', domain: 'byteline.press', reliability: 'Tier 1 Verified', indexedArticles: 218, status: 'Active' },
+  { name: 'Compute Weekly', domain: 'computeweekly.com', reliability: 'Tier 1 Verified', indexedArticles: 186, status: 'Active' },
+  { name: 'Signal & Stack', domain: 'signalstack.dev', reliability: 'Tier 2 Signal', indexedArticles: 124, status: 'Active' },
+  { name: 'Harbour Dispatch', domain: 'harbourdispatch.net', reliability: 'Regional News Wire', indexedArticles: 94, status: 'Active' },
+  { name: 'Meridian Wire', domain: 'meridianwire.org', reliability: 'News Wire', indexedArticles: 140, status: 'Active' },
 ];
 
 export const SourcesView: React.FC = () => {
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold text-foreground">Verified Publisher Sources</h2>
-            <span className="chip-pass text-3xs font-mono">
-              {SOURCES.length} Active Feeds
-            </span>
+    <div className="space-y-10">
+      {/* 1. Header */}
+      <div className="border-b border-border pb-4">
+        <h2 className="text-page-title text-primary">Sources & System Status</h2>
+        <p className="text-body text-secondary mt-1">
+          Source feeds indexed in the vector knowledge store and outbound execution telemetry.
+        </p>
+      </div>
+
+      {/* 2. System Status & Swytchcode Architecture Panel */}
+      <div className="rounded-lg border border-border bg-surface p-6 space-y-5">
+        <div className="flex items-center justify-between border-b border-border pb-3">
+          <div>
+            <h3 className="text-section-heading text-primary">System Health & Execution Layer</h3>
+            <p className="text-xs text-secondary mt-0.5">
+              Auditable external API gateways and local fallback systems.
+            </p>
           </div>
-          <p className="text-xs text-foreground-muted mt-0.5">
-            Independent journalistic and technical outlets indexed in the Weaviate vector knowledge base.
-          </p>
+          <span className="status-pass text-xs">
+            Operational
+          </span>
+        </div>
+
+        {/* 5 Service Nodes Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs">
+          <div className="p-3.5 rounded bg-surface-raised border border-border space-y-1">
+            <div className="text-muted">RAG Engine</div>
+            <div className="font-semibold text-primary flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-status-pass" />
+              Operational
+            </div>
+          </div>
+
+          <div className="p-3.5 rounded bg-surface-raised border border-border space-y-1">
+            <div className="text-muted">Vector Database</div>
+            <div className="font-semibold text-primary flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-status-pass" />
+              Weaviate Live
+            </div>
+          </div>
+
+          <div className="p-3.5 rounded bg-surface-raised border border-border space-y-1">
+            <div className="text-muted">LLM Synthesis</div>
+            <div className="font-semibold text-primary flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-status-pass" />
+              Operational
+            </div>
+          </div>
+
+          <div className="p-3.5 rounded bg-surface-raised border border-border space-y-1">
+            <div className="text-muted">Slack Channels</div>
+            <div className="font-semibold text-primary flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-status-pass" />
+              Operational
+            </div>
+          </div>
+
+          <div className="p-3.5 rounded bg-surface-raised border border-border space-y-1">
+            <div className="text-muted">Execution Mode</div>
+            <div className="font-semibold text-primary flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-status-pass" />
+              NORMAL / FALLBACK
+            </div>
+          </div>
+        </div>
+
+        {/* Architecture Note */}
+        <div className="p-4 rounded bg-surface-raised border border-border-subtle text-xs text-secondary leading-relaxed">
+          <span className="font-semibold text-primary">Fail-Safe Architecture: </span>
+          Gatekeeper funnels every external API call through a single execution gateway. When network services or upstream APIs become unreachable, Gatekeeper automatically falls back to the deterministic local knowledge corpus so evaluation never breaks.
         </div>
       </div>
 
-      {/* Sources Table */}
-      <div className="card overflow-hidden bg-surface shadow-panel">
-        <div className="overflow-x-auto">
+      {/* 3. Verified Publisher Sources Table */}
+      <div className="space-y-4">
+        <h3 className="text-section-heading text-primary">Indexed Publishers</h3>
+
+        <div className="rounded-lg border border-border bg-surface overflow-hidden">
           <table className="w-full text-left text-xs">
-            <thead className="bg-surface-raised/80 border-b border-border text-3xs uppercase font-mono text-foreground-faint">
+            <thead className="border-b border-border text-muted font-medium bg-surface-raised/50">
               <tr>
-                <th className="py-3 px-4 font-semibold">Publisher</th>
-                <th className="py-3 px-4 font-semibold">Domain</th>
-                <th className="py-3 px-4 font-semibold">Reliability Tier</th>
-                <th className="py-3 px-4 font-semibold">Category</th>
-                <th className="py-3 px-4 font-semibold text-right">Passages Indexed</th>
-                <th className="py-3 px-4 font-semibold text-center">Status</th>
+                <th className="py-3.5 px-5">Publisher</th>
+                <th className="py-3.5 px-4">Domain</th>
+                <th className="py-3.5 px-4">Reliability Tier</th>
+                <th className="py-3.5 px-4 text-right">Indexed Passages</th>
+                <th className="py-3.5 px-5 text-right">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border-subtle">
               {SOURCES.map((s) => (
-                <tr key={s.name} className="hover:bg-surface-raised/40 transition-colors">
-                  <td className="py-3 px-4 font-semibold text-foreground flex items-center gap-2">
-                    <span className="w-6 h-6 rounded bg-surface-raised border border-border flex items-center justify-center font-serif text-3xs text-brand font-bold">
-                      {s.name[0]}
-                    </span>
-                    <span>{s.name}</span>
+                <tr key={s.name} className="hover:bg-surface-raised transition-colors">
+                  <td className="py-4 px-5 font-semibold text-primary">
+                    {s.name}
                   </td>
-                  <td className="py-3 px-4 font-mono text-3xs text-foreground-muted">
+                  <td className="py-4 px-4 font-mono text-muted text-xs">
                     {s.domain}
                   </td>
-                  <td className="py-3 px-4">
-                    <span className="inline-flex items-center gap-1 text-3xs font-mono text-foreground-muted">
-                      <span className="text-status-pass">●</span>
-                      {s.reliability} ({s.reliabilityScore}%)
-                    </span>
+                  <td className="py-4 px-4 text-secondary">
+                    {s.reliability}
                   </td>
-                  <td className="py-3 px-4 text-3xs text-foreground-muted">
-                    {s.category}
-                  </td>
-                  <td className="py-3 px-4 text-right font-mono text-3xs font-semibold text-foreground">
+                  <td className="py-4 px-4 text-right font-mono text-primary font-medium">
                     {s.indexedArticles}
                   </td>
-                  <td className="py-3 px-4 text-center">
-                    <span className="chip-pass text-3xs">
-                      Operational
-                    </span>
+                  <td className="py-4 px-5 text-right text-status-pass font-medium">
+                    ● {s.status}
                   </td>
                 </tr>
               ))}

@@ -3,137 +3,113 @@
 @tailwind utilities;
 
 /* ---------------------------------------------------------------------------
-   Design tokens — Production-grade SaaS dark-first interface.
-   Inspired by Linear, Vercel, and Perplexity.
+   Editorial Content Governance Design System
+   Restrained dark theme, high contrast typography, precise spacing.
    --------------------------------------------------------------------------- */
 
 :root {
   color-scheme: dark;
-
-  --paper: #090a0f;
-  --paper-raised: #0f1117;
-  --paper-sunk: #161922;
-
-  --ink: #f1f5f9;
-  --ink-soft: #94a3b8;
-  --ink-faint: #64748b;
-
-  --rule: #1f2430;
-
-  --accent: #3b82f6;
-  --accent-soft: #1e293b;
-
-  /* Gate verdicts */
-  --pass: #10b981;
-  --pass-bg: rgba(16, 185, 129, 0.1);
-  --warn: #f59e0b;
-  --warn-bg: rgba(245, 158, 11, 0.1);
-  --block: #ef4444;
-  --block-bg: rgba(239, 68, 68, 0.1);
-
-  /* Citation highlight */
-  --cite: rgba(245, 158, 11, 0.22);
 }
 
 html,
 body,
 #root {
   height: 100%;
-  background-color: #090a0f;
-  color: #f1f5f9;
+  background-color: #0B0D10;
+  color: #F5F7FA;
 }
 
 body {
-  background-color: #090a0f;
-  color: #f1f5f9;
+  background-color: #0B0D10;
+  color: #F5F7FA;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background: rgba(59, 130, 246, 0.35);
-  color: #ffffff;
+  background: rgba(59, 130, 246, 0.3);
+  color: #FFFFFF;
 }
 
 :focus-visible {
-  outline: 1.5px solid #3b82f6;
+  outline: 2px solid #3B82F6;
   outline-offset: 2px;
   border-radius: 4px;
 }
 
 @layer components {
-  .label {
-    @apply font-mono text-3xs uppercase tracking-wider text-foreground-faint font-medium;
-  }
-
-  .card {
-    @apply rounded-lg border border-border bg-surface shadow-panel transition-all;
-  }
-
-  .well {
-    @apply rounded-md border border-border-subtle bg-surface-raised;
-  }
-
   .btn {
     @apply inline-flex select-none items-center justify-center gap-2 rounded-md
-           px-3 py-1.5 text-xs font-medium transition-all duration-150
+           px-3.5 py-1.5 text-sm font-medium transition-colors duration-150
            disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   .btn-primary {
-    @apply btn bg-brand text-white hover:bg-brand-hover shadow-sm hover:shadow-glow;
+    @apply btn bg-brand text-white hover:bg-brand-hover shadow-sm;
   }
 
   .btn-ghost {
-    @apply btn border border-border bg-surface-raised text-foreground-muted hover:bg-surface-hover hover:text-foreground hover:border-foreground-faint/40;
+    @apply btn border border-border bg-surface text-secondary hover:bg-surface-raised hover:text-primary hover:border-border-strong;
   }
 
   .btn-pass {
-    @apply btn bg-status-pass/90 text-white hover:bg-status-pass;
+    @apply btn bg-status-pass text-white hover:opacity-90;
   }
 
   .btn-block {
-    @apply btn bg-status-block/90 text-white hover:bg-status-block;
+    @apply btn bg-status-block text-white hover:opacity-90;
   }
 
-  /* Verdict chips */
-  .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5
-           font-mono text-3xs uppercase tracking-wider font-semibold transition-all;
+  /* Verdict status pill */
+  .status-pill {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium;
   }
 
-  .chip-pass  { @apply chip border-status-pass-border bg-status-pass-bg text-status-pass; }
-  .chip-warn  { @apply chip border-status-warn-border bg-status-warn-bg text-status-warn; }
-  .chip-block { @apply chip border-status-block-border bg-status-block-bg text-status-block; }
-  .chip-idle  { @apply chip border-border bg-surface-raised text-foreground-faint; }
+  .status-pass {
+    @apply status-pill bg-status-pass-subtle text-status-pass border border-status-pass-border;
+  }
 
-  /* Interactive claim attribution underline */
+  .status-warn {
+    @apply status-pill bg-status-warn-subtle text-status-warn border border-status-warn-border;
+  }
+
+  .status-block {
+    @apply status-pill bg-status-block-subtle text-status-block border border-status-block-border;
+  }
+
+  .status-idle {
+    @apply status-pill bg-surface-raised text-muted border border-border;
+  }
+
+  /* Interactive claim attribution underline in editorial body */
   .claim {
-    @apply cursor-pointer rounded px-1 py-0.5 transition-all duration-150 text-foreground;
-    box-shadow: inset 0 -0.45em 0 var(--cite);
+    @apply cursor-pointer rounded px-1 py-0.5 transition-colors duration-150 text-primary;
+    background-color: rgba(245, 158, 11, 0.12);
+    border-bottom: 1.5px solid rgba(245, 158, 11, 0.4);
   }
 
   .claim:hover {
-    box-shadow: inset 0 -1.3em 0 var(--cite);
-    @apply text-white;
+    background-color: rgba(245, 158, 11, 0.22);
+    border-bottom-color: rgba(245, 158, 11, 0.8);
   }
 
   .claim-active {
-    box-shadow: inset 0 -1.3em 0 rgba(245, 158, 11, 0.35);
-    @apply ring-1 ring-amber-400/60 text-white font-medium bg-amber-500/10;
+    background-color: rgba(245, 158, 11, 0.28);
+    border-bottom-color: #F59E0B;
+    @apply ring-1 ring-amber-500/40 text-white font-medium;
   }
 
   .claim-weak {
-    box-shadow: inset 0 -0.45em 0 var(--block-bg);
-    @apply underline decoration-status-block decoration-wavy decoration-1 underline-offset-4;
+    background-color: rgba(239, 68, 68, 0.12);
+    border-bottom: 1.5px wavy #EF4444;
   }
 }
 
-/* Slim SaaS scrollbars */
+/* Restrained scrollbars */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #1f2430 transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
 }
 
 *::-webkit-scrollbar {
@@ -142,24 +118,14 @@ body {
 }
 
 *::-webkit-scrollbar-thumb {
-  background: #1f2430;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 999px;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: #2e3648;
+  background: rgba(255, 255, 255, 0.2);
 }
 
 *::-webkit-scrollbar-track {
   background: transparent;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
 }
