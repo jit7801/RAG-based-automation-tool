@@ -1,4 +1,11 @@
 {
+  "name": "proofly-workspace",
+  "private": true,
+  "scripts": {
+    "dev": "npm run dev --prefix gatekeeper",
+    "build": "npm run build --prefix gatekeeper",
+    "start": "npm run start --prefix gatekeeper"
+  },
   "dependencies": {
     "claude": "^0.1.1"
   }
