@@ -46,19 +46,31 @@ body {
   }
 
   .btn-primary {
-    @apply btn bg-brand text-white hover:bg-brand-hover shadow-sm;
+    @apply btn text-white shadow-sm;
+    background-color: #3B82F6;
+  }
+  .btn-primary:hover {
+    background-color: #2563EB;
   }
 
   .btn-ghost {
-    @apply btn border border-border bg-surface text-secondary hover:bg-surface-raised hover:text-primary hover:border-border-strong;
+    @apply btn text-secondary hover:text-primary;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: #14171C;
+  }
+  .btn-ghost:hover {
+    background-color: #191D23;
+    border-color: rgba(255, 255, 255, 0.14);
   }
 
   .btn-pass {
-    @apply btn bg-status-pass text-white hover:opacity-90;
+    @apply btn text-white hover:opacity-90;
+    background-color: #10B981;
   }
 
   .btn-block {
-    @apply btn bg-status-block text-white hover:opacity-90;
+    @apply btn text-white hover:opacity-90;
+    background-color: #EF4444;
   }
 
   /* Verdict status pill */
@@ -67,19 +79,30 @@ body {
   }
 
   .status-pass {
-    @apply status-pill bg-status-pass-subtle text-status-pass border border-status-pass-border;
+    @apply status-pill;
+    background-color: rgba(16, 185, 129, 0.12);
+    color: #10B981;
+    border: 1px solid rgba(16, 185, 129, 0.25);
   }
 
   .status-warn {
-    @apply status-pill bg-status-warn-subtle text-status-warn border border-status-warn-border;
+    @apply status-pill;
+    background-color: rgba(245, 158, 11, 0.12);
+    color: #F59E0B;
+    border: 1px solid rgba(245, 158, 11, 0.25);
   }
 
   .status-block {
-    @apply status-pill bg-status-block-subtle text-status-block border border-status-block-border;
+    @apply status-pill;
+    background-color: rgba(239, 68, 68, 0.12);
+    color: #EF4444;
+    border: 1px solid rgba(239, 68, 68, 0.25);
   }
 
   .status-idle {
-    @apply status-pill bg-surface-raised text-muted border border-border;
+    @apply status-pill text-muted;
+    background-color: #191D23;
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   /* Interactive claim attribution underline in editorial body */
