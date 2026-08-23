@@ -102,34 +102,40 @@ body {
 
   /* Verdict chip. */
   .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1
-           font-mono text-2xs uppercase tracking-[0.1em];
+    @apply inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5
+           font-mono text-2xs uppercase tracking-[0.08em] transition-all;
   }
 
-  .chip-pass  { @apply chip border-transparent bg-pass-bg  text-pass;  }
-  .chip-warn  { @apply chip border-transparent bg-warn-bg  text-warn;  }
-  .chip-block { @apply chip border-transparent bg-block-bg text-block; }
-  .chip-idle  { @apply chip border-rule bg-sunk text-ink-faint;        }
+  .chip-pass  { @apply chip border-transparent bg-pass-bg text-pass font-semibold; }
+  .chip-warn  { @apply chip border-transparent bg-warn-bg text-warn font-semibold; }
+  .chip-block { @apply chip border-transparent bg-block-bg text-block font-semibold; }
+  .chip-idle  { @apply chip border-rule bg-sunk text-ink-faint; }
 
   /* A claim inside the draft body, clickable to reveal provenance. */
   .claim {
-    @apply cursor-pointer rounded-[3px] px-0.5 transition-colors duration-150
+    @apply cursor-pointer rounded px-1 py-0.5 transition-all duration-150
            ease-editorial;
-    box-shadow: inset 0 -0.45em 0 var(--cite);
+    box-shadow: inset 0 -0.4em 0 var(--cite);
   }
 
   .claim:hover {
-    box-shadow: inset 0 -1.1em 0 var(--cite);
+    box-shadow: inset 0 -1.3em 0 var(--cite);
+    @apply text-ink;
   }
 
   .claim-active {
-    box-shadow: inset 0 -1.1em 0 var(--cite);
+    box-shadow: inset 0 -1.3em 0 var(--cite);
+    @apply ring-1 ring-amber-400/50 text-ink font-medium;
   }
 
   /* Unsupported claim — the evidence check found no corroboration. */
   .claim-weak {
-    box-shadow: inset 0 -0.45em 0 var(--block-bg);
+    box-shadow: inset 0 -0.4em 0 var(--block-bg);
     @apply underline decoration-block decoration-wavy decoration-1 underline-offset-4;
+  }
+
+  .shadow-2xs {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
   }
 }
 
@@ -140,13 +146,17 @@ body {
 }
 
 *::-webkit-scrollbar {
-  width: 9px;
-  height: 9px;
+  width: 7px;
+  height: 7px;
 }
 
 *::-webkit-scrollbar-thumb {
   background: var(--rule);
   border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-faint);
 }
 
 *::-webkit-scrollbar-track {

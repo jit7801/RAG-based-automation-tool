@@ -98,14 +98,16 @@ export const App: React.FC = () => {
         onOpenRepurpose={() => handleOpenRepurpose()}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
         {/* Editorial Subtitle / Intro Banner */}
-        <div className="flex flex-wrap items-center justify-between border-b border-rule pb-3 text-xs text-ink-soft">
-          <div>
-            <span className="font-semibold text-ink">Autonomous Daily Publication Engine</span> — Retrieves multi-source trends, grounds factual claims, evaluates brand safety & novelty, and repurposes verified content across platforms.
+        <div className="flex flex-wrap items-center justify-between border-b border-rule pb-3.5 gap-2 text-xs text-ink-soft">
+          <div className="flex items-center gap-2">
+            <span className="font-serif font-bold text-ink text-sm">Autonomous Editorial Stream</span>
+            <span className="text-ink-faint">|</span>
+            <span className="hidden sm:inline">Grounds factual claims, evaluates brand safety & novelty, and repurposes verified content across platforms.</span>
           </div>
-          <div className="font-mono text-2xs text-ink-faint">
-            Fixed Schedule: {config?.scheduleLabel || '09:00 daily'}
+          <div className="font-mono text-2xs text-ink-faint bg-paper px-2 py-0.5 rounded border border-rule">
+            Fixed Schedule: <span className="font-semibold text-ink">{config?.scheduleLabel || '09:00 daily'}</span>
           </div>
         </div>
 

@@ -69,29 +69,30 @@ export const ScenarioSelector: React.FC<ScenarioSelectorProps> = ({
         {PRESET_SCENARIOS.map((sc) => (
           <div
             key={sc.id}
-            className="rounded-lg border border-rule bg-raised p-3 hover:border-accent/40 transition-all shadow-2xs flex flex-col justify-between gap-2"
+            className="rounded-lg border border-rule bg-raised p-3.5 hover:border-accent/40 hover:shadow-2xs transition-all flex flex-col justify-between gap-2.5"
           >
             <div>
               <div className="flex items-center justify-between gap-2">
                 <h4 className="text-xs font-bold text-ink">{sc.title}</h4>
                 <span className={sc.badgeClass}>{sc.badge}</span>
               </div>
-              <p className="text-xs font-serif font-medium text-ink-soft mt-0.5">
+              <p className="text-xs font-serif font-medium text-ink-soft mt-1">
                 "{sc.topic}"
               </p>
-              <p className="text-2xs text-ink-faint mt-1 leading-normal">
+              <p className="text-2xs text-ink-faint mt-1 leading-relaxed">
                 {sc.desc}
               </p>
             </div>
 
-            <div className="flex justify-end pt-1">
+            <div className="flex justify-end pt-1 border-t border-rule/50">
               <button
                 id={`btn-run-${sc.id}`}
                 onClick={() => onSelectScenario({ trendId: sc.id })}
                 disabled={isRunning}
-                className="btn-ghost text-2xs px-3 py-1 font-mono hover:border-accent hover:text-accent"
+                className="btn-ghost text-2xs px-2.5 py-1 font-mono hover:border-accent hover:text-accent font-medium flex items-center gap-1"
               >
-                Run Scenario →
+                <span>Run Scenario</span>
+                <span>→</span>
               </button>
             </div>
           </div>
@@ -99,7 +100,7 @@ export const ScenarioSelector: React.FC<ScenarioSelectorProps> = ({
       </div>
 
       {/* Custom Query Search */}
-      <div className="pt-2 border-t border-rule space-y-2">
+      <div className="pt-3 border-t border-rule space-y-2">
         <span className="label text-2xs">Custom Live Trend Search</span>
         <form onSubmit={handleCustomSubmit} className="flex gap-2">
           <input
@@ -109,13 +110,13 @@ export const ScenarioSelector: React.FC<ScenarioSelectorProps> = ({
             onChange={(e) => setCustomQuery(e.target.value)}
             placeholder="e.g. Next-gen humanoid robotics, WebGPU..."
             disabled={isRunning}
-            className="flex-1 rounded-md border border-rule bg-paper px-3 py-1.5 text-xs text-ink placeholder:text-ink-faint focus:outline-none focus:ring-1 focus:ring-accent"
+            className="flex-1 rounded-md border border-rule bg-paper px-3 py-1.5 text-xs text-ink placeholder:text-ink-faint focus:outline-none focus:ring-1 focus:ring-accent font-sans"
           />
           <button
             id="btn-run-custom"
             type="submit"
             disabled={isRunning || !customQuery.trim()}
-            className="btn-primary text-xs px-3 py-1.5"
+            className="btn-primary text-xs px-3.5 py-1.5 font-medium shadow-2xs"
           >
             Search & Run
           </button>

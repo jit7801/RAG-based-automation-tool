@@ -50,51 +50,51 @@ export const Header: React.FC<HeaderProps> = ({
   const services = config?.services || {};
 
   return (
-    <header className="border-b border-rule bg-raised px-6 py-4 shadow-sm">
+    <header className="border-b border-rule bg-raised px-6 py-3.5 shadow-xs sticky top-0 z-30">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
         {/* Branding */}
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent text-white font-serif font-bold text-lg shadow-sm">
+          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-accent text-white font-serif font-bold text-base shadow-sm">
             G
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="font-serif text-xl font-bold tracking-tight text-ink">
+              <h1 className="font-serif text-lg font-bold tracking-tight text-ink">
                 GATEKEEPER
               </h1>
-              <span className="label rounded border border-rule px-1.5 py-0.5 text-2xs bg-sunk text-ink-soft">
+              <span className="label rounded border border-rule/70 px-1.5 py-0.5 text-2xs bg-sunk text-ink-soft font-mono">
                 v1.0 • RAG Automator
               </span>
             </div>
-            <p className="text-xs text-ink-soft">
+            <p className="text-xs text-ink-soft hidden sm:block">
               Autonomous trend-grounded publisher with an editorial gate
             </p>
           </div>
         </div>
 
         {/* Schedule & Services info */}
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
           {/* Daily Schedule Badge */}
-          <div className="flex items-center gap-2 rounded-md border border-rule bg-paper px-3 py-1.5">
+          <div className="flex items-center gap-2 rounded-md border border-rule bg-paper px-2.5 py-1.5 shadow-2xs">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-pass opacity-75"></span>
               <span className="relative inline-flex h-2 w-2 rounded-full bg-pass"></span>
             </span>
             <div className="text-xs">
-              <span className="font-medium text-ink">
+              <span className="font-semibold text-ink font-mono text-2xs">
                 {config?.scheduleLabel || '09:00 daily'}
               </span>
               {timeLeft && (
-                <span className="ml-2 font-mono text-2xs text-ink-faint">
-                  (Next in {timeLeft})
+                <span className="ml-1.5 font-mono text-2xs text-ink-faint">
+                  ({timeLeft})
                 </span>
               )}
             </div>
           </div>
 
           {/* Service health indicators */}
-          <div className="hidden sm:flex items-center gap-1.5 rounded-md border border-rule bg-sunk px-2.5 py-1.5 text-2xs font-mono text-ink-faint">
-            <span className="text-2xs uppercase tracking-wider text-ink-faint mr-1">Services:</span>
+          <div className="hidden lg:flex items-center gap-1 rounded-md border border-rule bg-sunk px-2 py-1 text-2xs font-mono text-ink-faint">
+            <span className="text-2xs uppercase tracking-wider text-ink-faint mr-1 font-semibold">Services:</span>
             {['jina', 'weaviate', 'openai', 'slack'].map((srv) => {
               const status = services[srv] || 'fallback';
               const isLiveSrv = status === 'live';
@@ -104,7 +104,7 @@ export const Header: React.FC<HeaderProps> = ({
                   title={`${srv}: ${status}`}
                   className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 uppercase ${
                     isLiveSrv
-                      ? 'bg-pass-bg text-pass font-medium'
+                      ? 'bg-pass-bg text-pass font-medium border border-pass/20'
                       : 'bg-paper text-ink-soft border border-rule'
                   }`}
                 >
@@ -123,7 +123,7 @@ export const Header: React.FC<HeaderProps> = ({
           {onOpenRepurpose && (
             <button
               onClick={onOpenRepurpose}
-              className="btn-ghost text-xs px-3 py-1.5 flex items-center gap-1.5 text-accent font-semibold border border-accent/20 bg-accent/5 hover:bg-accent hover:text-white transition-all shadow-2xs"
+              className="btn-ghost text-xs px-3 py-1.5 flex items-center gap-1.5 text-accent font-semibold border-accent/30 bg-accent/5 hover:bg-accent hover:text-white transition-all shadow-2xs"
               title="Multi-Platform Repurposing Studio"
             >
               <span>⚡</span>
@@ -138,7 +138,7 @@ export const Header: React.FC<HeaderProps> = ({
             title="Thresholds & Settings"
           >
             <svg
-              className="h-4 w-4"
+              className="h-3.5 w-3.5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -163,7 +163,7 @@ export const Header: React.FC<HeaderProps> = ({
             id="btn-trigger-run"
             onClick={onTriggerRun}
             disabled={isRunning}
-            className="btn-primary text-xs px-4 py-1.5 flex items-center gap-2"
+            className="btn-primary text-xs px-3.5 py-1.5 flex items-center gap-2 shadow-sm font-medium"
           >
             {isRunning ? (
               <>
@@ -186,7 +186,7 @@ export const Header: React.FC<HeaderProps> = ({
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   />
                 </svg>
-                Running Pipeline...
+                Running...
               </>
             ) : (
               <>
@@ -209,7 +209,7 @@ export const Header: React.FC<HeaderProps> = ({
                     d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                Run Pipeline Now
+                Run Pipeline
               </>
             )}
           </button>
